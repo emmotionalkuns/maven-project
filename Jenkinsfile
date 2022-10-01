@@ -23,5 +23,20 @@ pipeline {
                 sh '/opt/maven/bin/mvn package'
             }
         }
+        stage('publish to jfrog') {
+            steps {
+                rtUpload (
+                    serverId: 'jfrog-dev',
+                    spec: '''{
+                          "files": [
+                            {
+                              "pattern": "target/kitchensink.war",
+                              "target": "non-prod-repo/"
+                            }
+                         ]
+                    }'''
+                )
+            }
+        }        
     }
 }
