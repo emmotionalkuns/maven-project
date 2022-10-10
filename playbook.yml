@@ -1,4 +1,4 @@
-- hosts: tomcat
+- hosts: httpd
   tasks:
   - name: Setting up yum repository for Docker
     yum_repository:
