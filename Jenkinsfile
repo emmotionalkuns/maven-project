@@ -4,9 +4,7 @@ pipeline {
     stages {
         stage('compile code') {
             steps {
-                deleteDir()
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
-                sh '/opt/maven/bin/mvn compile '
+              sh '/opt/maven/bin/mvn compile '
             }
         }
         stage('PMD code-review') {
