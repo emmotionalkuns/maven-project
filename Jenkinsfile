@@ -2,12 +2,12 @@ pipeline {
     agent any
 
     stages {
-        stage('compile') {
+        stage('compile code') {
             steps {
-                sh '/opt/maven/bin/mvn compile '
+              sh '/opt/maven/bin/mvn compile '
             }
         }
-        stage('code-review') {
+        stage('PMD code-review') {
             steps {
                 sh '/opt/maven/bin/mvn -P metrics pmd:pmd  '
             }
@@ -32,12 +32,12 @@ pipeline {
         }
     }
         
-        stage('package') {
+        stage('package app') {
             steps {
                 sh '/opt/maven/bin/mvn package'
             }
         }
-        stage('publish to jfrog') {
+        stage('publish app to jfrog') {
             steps {
                 rtUpload (
                     serverId: 'jfrog-dev',
@@ -51,6 +51,11 @@ pipeline {
                     }'''
                 )
             }
-        }        
+        }
+        stage('Ansible Deploy to httpd') {
+            steps {
+                ansiblePlaybook becomeUser: null, credentialsId: 'ansible-token', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml', sudoUser: null
+            }
+        }    
     }
 }
