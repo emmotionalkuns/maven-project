@@ -55,7 +55,9 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                ansiblePlaybook credentialsId: 'ansible-token', installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml'
+                sh 'ls -l'
+                // ansiblePlaybook credentialsId: 'ansible-token', installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml'
+                ansiblePlaybook becomeUser: null, credentialsId: 'ansible-token', installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml', sudoUser: null
             }
         }    
     }
