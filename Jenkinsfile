@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('compile') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
+                // checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
                 sh '/opt/maven/bin/mvn compile '
             }
         }
@@ -18,6 +18,21 @@ pipeline {
                 }
             }
         }
+        
+        stage('Sonar Code Analysis') {
+            environment {
+            scannerHome = tool 'sonarqube-scanner'
+        }
+        steps {
+            withSonarQubeEnv('sonarqube') { 
+                sh "${scannerHome}/bin/sonar-scanner"
+            }
+            timeout(time: 3, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+            }
+        }
+    }
+        
         stage('package') {
             steps {
                 sh '/opt/maven/bin/mvn package'
