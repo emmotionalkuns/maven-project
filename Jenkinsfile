@@ -2,14 +2,14 @@ pipeline {
     agent any
 
     stages {
-        stage('compile') {
+        stage('compile code') {
             steps {
                 deleteDir()
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
                 sh '/opt/maven/bin/mvn compile '
             }
         }
-        stage('code-review') {
+        stage('PMD code-review') {
             steps {
                 sh '/opt/maven/bin/mvn -P metrics pmd:pmd  '
             }
@@ -34,12 +34,12 @@ pipeline {
         }
     }
         
-        stage('package') {
+        stage('package app') {
             steps {
                 sh '/opt/maven/bin/mvn package'
             }
         }
-        stage('publish to jfrog') {
+        stage('publish app to jfrog') {
             steps {
                 rtUpload (
                     serverId: 'jfrog-dev',
@@ -54,7 +54,7 @@ pipeline {
                 )
             }
         }
-        stage('Deploy') {
+        stage('Deploy app to httpd') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/feature-docker']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
                 sh 'ls -l'
