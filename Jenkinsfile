@@ -56,7 +56,7 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/feature-docker']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
                 sh 'ls -l'
                 // ansiblePlaybook credentialsId: 'ansible-token', installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml'
                 // ansiblePlaybook becomeUser: null, credentialsId: 'ansible-token', installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml', sudoUser: null
