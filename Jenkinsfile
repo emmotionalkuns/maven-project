@@ -18,6 +18,21 @@ pipeline {
                 }
             }
         }
+        
+        stage('Scan-sonar') {
+            environment {
+            scannerHome = tool 'sonarqube-scanner'
+        }
+        steps {
+            withSonarQubeEnv('sonarqube') { 
+                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=mavenapp -Dsonar.sources=.  "
+            }
+            timeout(time: 3, unit: 'MINUTES') {
+                waitForQualityGate abortPipeline: true
+            }
+        }
+    }
+        
         stage('package') {
             steps {
                 sh '/opt/maven/bin/mvn package'
