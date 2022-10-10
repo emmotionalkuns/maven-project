@@ -56,7 +56,6 @@ pipeline {
         }
         stage('Ansible Deploy to httpd') {
             steps {
-                checkout([$class: 'GitSCM', branches: [[name: '*/feature-docker']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
                 ansiblePlaybook becomeUser: null, credentialsId: 'ansible-token', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml', sudoUser: null
             }
         }    
