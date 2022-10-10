@@ -5,7 +5,7 @@ pipeline {
         stage('compile') {
             steps {
                 deleteDir()
-                // checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
+                checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/bloomytech/maven-project.git']]])
                 sh '/opt/maven/bin/mvn compile '
             }
         }
