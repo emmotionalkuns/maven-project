@@ -25,7 +25,7 @@ pipeline {
         }
         steps {
             withSonarQubeEnv('sonarqube') { 
-                sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=mavenapp -Dsonar.sources=.  "
+                sh "${scannerHome}/bin/sonar-scanner"
             }
             timeout(time: 3, unit: 'MINUTES') {
                 waitForQualityGate abortPipeline: true
