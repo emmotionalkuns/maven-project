@@ -52,6 +52,11 @@ pipeline {
                     }'''
                 )
             }
-        }        
+        }
+        stage('Deploy') {
+            steps {
+                ansiblePlaybook credentialsId: 'ansible-token', installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml'
+            }
+        }    
     }
 }
