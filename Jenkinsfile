@@ -56,6 +56,11 @@ pipeline {
             steps {
                 ansiblePlaybook becomeUser: null, credentialsId: 'ansible-token', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml', sudoUser: null
             }
-        }    
+        }
+        stage('Build Docker Image'){
+            steps{
+                sh 'docker build -t sudhanlogics/ci-cd-demo:$BUILD_NUMBER .'
+            }
+        }	
     }
 }
