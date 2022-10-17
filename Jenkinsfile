@@ -59,7 +59,7 @@ pipeline {
         }
         stage('Build Docker Image'){
             steps{
-                sh 'docker build -t sudhanlogics/ci-cd-demo:$BUILD_NUMBER .'
+                sh 'docker build -t bloomy/myapp:$BUILD_NUMBER .'
             }
         }	
     }
