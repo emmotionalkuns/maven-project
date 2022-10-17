@@ -59,6 +59,7 @@ pipeline {
         }
         stage('Build Docker Image'){
             steps{
+                sh 'id'
                 sh 'docker build -t bloomy/myapp:$BUILD_NUMBER .'
                 sh 'docker images'
             }
