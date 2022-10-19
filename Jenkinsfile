@@ -57,10 +57,9 @@ pipeline {
                 ansiblePlaybook becomeUser: null, credentialsId: 'ansible-token', disableHostKeyChecking: true, installation: 'ansible', inventory: 'inventory', playbook: 'playbook.yml', sudoUser: null
             }
         }
-        stage('Build Docker Image'){
+        stage('build app as docker image and run as container'){
             steps{
                 sh 'docker build -t bloomy/myapp:1.0.$BUILD_NUMBER .'
-                sh 'docker images'
                 sh 'docker run -d -p 8050:8050 --name myapp-1.0.$BUILD_NUMBER bloomy/myapp:1.0.$BUILD_NUMBER'
             }
         }	
