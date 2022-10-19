@@ -59,7 +59,7 @@ pipeline {
         }
         stage('build app as docker image and run as container'){
             steps{
-                sh "docker container stop $(docker container ls -aq) && docker system prune -af --volumes"
+                sh 'docker container stop $(docker container ls -aq) && docker system prune -af --volumes'
                 sh 'docker build -t bloomy/myapp:1.0.$BUILD_NUMBER .'
                 sh 'docker run -d -p 8050:8050 --name myapp-1.0.$BUILD_NUMBER bloomy/myapp:1.0.$BUILD_NUMBER'
             }
