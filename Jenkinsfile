@@ -59,7 +59,7 @@ pipeline {
         }
         stage('build app as docker image and run as container'){
             steps{
-                sh 'docker stop container $(docker ps | grep catalina | awk \'{ print $1 }\') || true'
+                sh 'docker stop container $(docker ps | grep catalina | awk \'{ print $1 }\') || true' // this command looks for previously running app on port 8050 and kills it
                 sh 'docker build -t bloomy/myapp:1.0.$BUILD_NUMBER .'
                 sh 'docker run -d -p 8050:8050 --name myapp-1.0.$BUILD_NUMBER bloomy/myapp:1.0.$BUILD_NUMBER'
             }
