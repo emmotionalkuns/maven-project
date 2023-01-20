@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 # Resource Block defines the resources you will deploy on aws
-resource "aws_instance" "ec2demo" {
+resource "aws_instance" "ec2demo1" {
  ami           = " ami-0b5eea76982371e91" # Amazon Linux2 in us-east-1
  instance_type = "t2.micro"
  
