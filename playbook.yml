@@ -27,8 +27,10 @@
       line: "{{ item }}"
     with_items:
       - 'export JAVA_HOME="/opt/jdk-11"'
-      - 'export PATH=$PATH:$JAVA_HOME/bin'
 
+  - name: Execute the command in remote shell; stdout goes to the specified file on the remote
+    ansible.builtin.shell: echo PATH=$PATH:/opt/jdk-11/bin >> /etc/profile
+  
   - name: Reload /etc/profile file
     shell:
       cmd: source /etc/profile
@@ -51,7 +53,9 @@
       line: "{{ item }}"
     with_items:
       - 'export MAVEN_HOME="/opt/apache-maven-3.8.7"'
-      - 'export PATH=$PATH:$MAVEN_HOME/bin'
+
+  - name: Execute the command in remote shell; stdout goes to the specified file on the remote
+    ansible.builtin.shell: echo PATH=$PATH:/opt/apache-maven-3.8.7/bin >> /etc/profile
 
   - name: Reload /etc/profile file
     shell:
