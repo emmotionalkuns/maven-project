@@ -1,43 +1,92 @@
-- hosts: httpd
+---
+- hosts: target
+  become: yes
+  remote_user: rocky
+  become_user: root
   tasks:
-  - name: Setting up yum repository for Docker
-    yum_repository:
-     name: docker
-     description: DOCKER YUM repo
-     file: docker_repo
-     baseurl: https://download.docker.com/linux/centos/8/$basearch/stable
-     enabled: 1
-     gpgcheck: 1
-     gpgkey: https://download.docker.com/linux/centos/gpg
-    become: yes
-  - name: Installing Docker
+  - name: Install git
     yum:
-      name:
-            - docker-ce
-            - docker-ce-cli
-            - containerd.io
+      name: git
       state: present
-    become: yes
-  - name: Start docker service
-    service:
-     name: docker
-     state: started
-     enabled: yes
-    become: yes
-  - name: Install docker-py
-    pip:
-     name: docker-py
-    become: yes
-  - name: Pull mywebpage image from dockerhub
-    community.docker.docker_image:
-     name: bloomytech/my-webpage:2.0
-     source: pull
-    become: yes
-  - name: Create a httpd server container
-    community.docker.docker_container:
-     name: webserver
-     image: bloomytech/my-webpage:2.0
-     ports:
-      - "8080:80"
-     container_default_behavior: compatibility
-    become: yes
+
+  - name: Download openjdk (JAVA)
+    get_url:
+      url: https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz
+      dest: /opt/openjdk-11_linux-x64_bin.tar.gz
+
+  - name: Unzip the downloaded file
+    unarchive:
+      src: /opt/openjdk-11_linux-x64_bin.tar.gz
+      dest: /opt
+      remote_src: yes
+
+  - name: Set the JAVA_HOME in /etc/profile file
+    lineinfile:
+      path: /etc/profile
+      state: present
+      line: "{{ item }}"
+    with_items:
+      - 'export JAVA_HOME="/opt/jdk-11"'
+      - 'export PATH=$PATH:$JAVA_HOME/bin'
+
+  - name: Reload /etc/profile file
+    shell:
+      cmd: source /etc/profile
+
+  - name: Download Maven
+    get_url:
+      url: https://dlcdn.apache.org/maven/maven-3/3.8.7/binaries/apache-maven-3.8.7-bin.tar.gz
+      dest: /opt/apache-maven-3.8.7-bin.tar.gz
+
+  - name: Unzip the downloaded file
+    unarchive:
+      src: /opt/apache-maven-3.8.7-bin.tar.gz
+      dest: /opt
+      remote_src: yes
+
+  - name: Rename maven directory to /opt/maven
+    ansible.builtin.copy:
+      src: /opt/apache-maven-3.8.7
+      dest: /opt/maven
+
+  - name: Set the JAVA_HOME in /etc/profile file
+    lineinfile:
+      path: /etc/profile
+      state: present
+      line: "{{ item }}"
+    with_items:
+      - 'export MAVEN_HOME="/opt/maven"'
+      - 'export PATH=$PATH:$MAVEN_HOME/bin'
+
+  - name: Reload /etc/profile file
+    shell:
+      cmd: source /etc/profile
+
+  - name: Download Long Term Jenkins release
+    get_url:
+      url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+      dest: /etc/yum.repos.d/jenkins.repo
+
+  - name: Import jenkins key from url
+    ansible.builtin.rpm_key:
+      state: present
+      key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+  - name: yum update
+    yum:
+      name: '*'
+      state: latest
+
+  - name: Install jenkins
+    yum:
+      name: jenkins
+      state: latest
+
+  - name: daemon-reload to pick up config changes
+    ansible.builtin.systemd:
+      daemon_reload: yes
+
+  - name: Start jenkins
+    ansible.builtin.systemd:
+      name: jenkins
+      state: started
