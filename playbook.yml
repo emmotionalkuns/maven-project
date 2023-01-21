@@ -44,18 +44,13 @@
       dest: /opt
       remote_src: yes
 
-  - name: Rename maven directory to /opt/maven
-    ansible.builtin.copy:
-      src: /opt/apache-maven-3.8.7
-      dest: /opt/maven
-
-  - name: Set the JAVA_HOME in /etc/profile file
+  - name: Set the MAVEN_HOME in /etc/profile file
     lineinfile:
       path: /etc/profile
       state: present
       line: "{{ item }}"
     with_items:
-      - 'export MAVEN_HOME="/opt/maven"'
+      - 'export MAVEN_HOME="/opt/apache-maven-3.8.7"'
       - 'export PATH=$PATH:$MAVEN_HOME/bin'
 
   - name: Reload /etc/profile file
