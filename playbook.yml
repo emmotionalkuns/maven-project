@@ -11,7 +11,7 @@
 
   - name: Download openjdk (JAVA)
     get_url:
-      url: https://download.java.net/java/ga/jdk11/openjdk-11_linux-x64_bin.tar.gz
+      url: https://aka.ms/download-jdk/microsoft-jdk-11.0.17-linux-x64.tar.gz
       dest: /opt/openjdk-11_linux-x64_bin.tar.gz
 
   - name: Unzip the downloaded file
@@ -26,7 +26,7 @@
       state: present
       line: "{{ item }}"
     with_items:
-      - 'export JAVA_HOME="/opt/jdk-11"'
+      - 'export JAVA_HOME="/opt/jdk-11.0.17+8"'
 
   - name: Reload /etc/profile file
     shell:
@@ -51,8 +51,8 @@
     with_items:
       - 'export MAVEN_HOME="/opt/apache-maven-3.8.7"'
 
-  - name: set PATH variable
-    ansible.builtin.shell: echo export PATH=$PATH:/opt/apache-maven-3.8.7/bin:/opt/jdk-11/bin >> /etc/profile
+  - name: Execute the command in remote shell; stdout goes to the specified file on the remote
+    ansible.builtin.shell: echo export PATH=$PATH:/opt/apache-maven-3.8.7/bin:/opt/jdk-11.0.17+8/bin >> /etc/profile
 
   - name: Reload /etc/profile file
     shell:
@@ -82,7 +82,6 @@
     ansible.builtin.systemd:
       daemon_reload: yes
 
-  - name: Start jenkins
-    ansible.builtin.systemd:
-      name: jenkins
-      state: started
+  - name: Start Jenkins
+    shell:
+      cmd: source /etc/profile && nohup /usr/bin/jenkins > /dev/null 2>&1 &
